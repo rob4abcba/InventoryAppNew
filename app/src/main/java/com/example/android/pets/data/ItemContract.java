@@ -17,7 +17,7 @@ public final class ItemContract {
      */
     public static final class ItemEntry implements BaseColumns {
 
-        /** Name of database table for pets */
+        /** Name of database table for items */
         public final static String TABLE_NAME = "items";
 
         // Unique ID number for the item (only for use in the database table).
