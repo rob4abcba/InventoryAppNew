@@ -16,7 +16,7 @@ public class ItemDbHelper extends SQLiteOpenHelper {
     public static final String LOG_TAG = ItemDbHelper.class.getSimpleName();
 
     // Name of the database file
-    private static final String DATABASE_NAME = "shelter.db";
+    private static final String DATABASE_NAME = "storeInventory.db";
 
     // Database version. If you change the database schema, you must increment the version number.
     private static final int DATABASE_VERSION = 1;

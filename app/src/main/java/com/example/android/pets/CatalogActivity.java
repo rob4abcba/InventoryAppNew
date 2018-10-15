@@ -42,7 +42,12 @@ public class CatalogActivity extends AppCompatActivity {
         // To access our database, we instantiate our subclass of SQLiteOpenHelper
         // and pass the context, which is the current activity.
         mDbHelper = new ItemDbHelper(this);
+    }
 
+
+    @Override
+    protected void onStart () {
+        super.onStart();
         displayDatabaseInfo();
     }
 
@@ -80,7 +85,7 @@ public class CatalogActivity extends AppCompatActivity {
         ContentValues values = new ContentValues();
         values.put(ItemEntry.COLUMN_ITEM_NAME, "Linkin Park CD");
         values.put(ItemEntry.COLUMN_ITEM_PRICE, "8.99");
-        values.put(ItemEntry.COLUMN_ITEM_QUANTITY, 5);
+        values.put(ItemEntry.COLUMN_ITEM_QUANTITY, "5");
         values.put(ItemEntry.COLUMN_ITEM_SUPPLIER_NAME, "Multimedia Suppliers Inc");
         values.put(ItemEntry.COLUMN_ITEM_SUPPLIER_PHONE, "8005555555");
 
@@ -111,6 +116,7 @@ public class CatalogActivity extends AppCompatActivity {
             case R.id.action_insert_dummy_data:
                 insertItem();
                 displayDatabaseInfo();
+                return true;
             // Respond to a click on the "Delete all entries" menu option
             case R.id.action_delete_all_entries:
                 // Do nothing for now
