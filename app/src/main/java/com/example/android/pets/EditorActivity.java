@@ -69,9 +69,7 @@ public class EditorActivity extends AppCompatActivity {
         String quantityString = mQuantityEditText.getText().toString().trim();
         String supplierNameString = mSupplierNameEditText.getText().toString().trim();
         String supplierPhoneString = mSupplierPhoneEditText.getText().toString().trim();
-        int price = Integer.parseInt(priceString);
         int quantity = Integer.parseInt(quantityString);
-        int supplierPhone = Integer.parseInt(supplierPhoneString);
 
         // Get database helper
         ItemDbHelper mDbHelper = new ItemDbHelper(this);
@@ -83,10 +81,10 @@ public class EditorActivity extends AppCompatActivity {
         // attributes are the values.
         ContentValues values = new ContentValues();
         values.put(ItemEntry.COLUMN_ITEM_NAME, nameString);
-        values.put(ItemEntry.COLUMN_ITEM_PRICE, price);
+        values.put(ItemEntry.COLUMN_ITEM_PRICE, priceString);
         values.put(ItemEntry.COLUMN_ITEM_QUANTITY, quantity);
         values.put(ItemEntry.COLUMN_ITEM_SUPPLIER_NAME, supplierNameString);
-        values.put(ItemEntry.COLUMN_ITEM_SUPPLIER_PHONE, supplierPhone);
+        values.put(ItemEntry.COLUMN_ITEM_SUPPLIER_PHONE, supplierPhoneString);
 
         // Insert a new item to the database,
         long newRowId = db.insert(ItemEntry.TABLE_NAME, null, values);

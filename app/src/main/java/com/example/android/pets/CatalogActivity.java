@@ -84,8 +84,8 @@ public class CatalogActivity extends AppCompatActivity {
         // and item attributes are the values.
         ContentValues values = new ContentValues();
         values.put(ItemEntry.COLUMN_ITEM_NAME, "Linkin Park CD");
-        values.put(ItemEntry.COLUMN_ITEM_PRICE, "8.99");
-        values.put(ItemEntry.COLUMN_ITEM_QUANTITY, "5");
+        values.put(ItemEntry.COLUMN_ITEM_PRICE, 6.99);
+        values.put(ItemEntry.COLUMN_ITEM_QUANTITY, 5);
         values.put(ItemEntry.COLUMN_ITEM_SUPPLIER_NAME, "Multimedia Suppliers Inc");
         values.put(ItemEntry.COLUMN_ITEM_SUPPLIER_PHONE, "8005555555");
 
