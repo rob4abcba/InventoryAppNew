@@ -69,7 +69,7 @@ public class EditorActivity extends AppCompatActivity {
         String quantityString = mQuantityEditText.getText().toString().trim();
         String supplierNameString = mSupplierNameEditText.getText().toString().trim();
         String supplierPhoneString = mSupplierPhoneEditText.getText().toString().trim();
-        int quantity = Integer.parseInt(quantityString);
+        // int quantity = Integer.parseInt(quantityString);
 
         // Get database helper
         ItemDbHelper mDbHelper = new ItemDbHelper(this);
@@ -77,9 +77,36 @@ public class EditorActivity extends AppCompatActivity {
         // Get database in write mode
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
+        if (TextUtils.isEmpty(nameString) || TextUtils.isEmpty(priceString)||
+                        TextUtils.isEmpty(supplierNameString) || TextUtils.isEmpty(supplierPhoneString)) {
+            // Since no fields were modified, we can return early without creating a new pet.
+            // No need to create ContentValues and no need to do any ContentProvider operations.
+            Toast.makeText(this, "Item was not saved, Item MUST have all fields!",
+                    Toast.LENGTH_SHORT).show();
+            if (TextUtils.isEmpty(nameString)) {
+                Toast.makeText(this, "Please enter the item's name",
+                        Toast.LENGTH_SHORT).show();}
+            if (TextUtils.isEmpty(priceString)) {
+                Toast.makeText(this, "Please enter the item's price",
+                        Toast.LENGTH_SHORT).show();}
+            if (TextUtils.isEmpty(quantityString)) {
+                Toast.makeText(this, "Please enter the item's quantity",
+                        Toast.LENGTH_SHORT).show();}
+            if (TextUtils.isEmpty(supplierNameString)) {
+                Toast.makeText(this, "Please enter the supplier's name",
+                        Toast.LENGTH_SHORT).show();}
+            if (TextUtils.isEmpty(supplierPhoneString)) {
+                Toast.makeText(this, "Please enter the supplier's phone number",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            return;
+        }
+
         // Create ContentValues object where columns are the keys, and item
         // attributes are the values.
         ContentValues values = new ContentValues();
+        int quantity = Integer.parseInt(quantityString);
         values.put(ItemEntry.COLUMN_ITEM_NAME, nameString);
         values.put(ItemEntry.COLUMN_ITEM_PRICE, priceString);
         values.put(ItemEntry.COLUMN_ITEM_QUANTITY, quantity);
@@ -109,7 +136,7 @@ public class EditorActivity extends AppCompatActivity {
                 insertItem();
                 // Exit the activity
                 finish();
-            // Respond to a click on the "Delete" menu option
+                // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
                 // Do nothing for now
                 return true;
