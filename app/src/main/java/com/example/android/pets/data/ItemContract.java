@@ -32,7 +32,7 @@ public final class ItemContract {
      * looking at pet data. content://com.example.android.pets/staff/ will fail,
      * as the ContentProvider hasn't been given any information on what to do with "staff".
      */
-    public static final String PATH_PETS = "pets";
+    public static final String PATH_ITEMS = "items";
 
     /**
      * Inner class that defines constant values for the inventory database table.
@@ -41,7 +41,7 @@ public final class ItemContract {
     public static final class ItemEntry implements BaseColumns {
 
         /** The content URI to access the pet data in the provider */
-        public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_PETS);
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_ITEMS);
 
         /** Name of database table for items */
         public final static String TABLE_NAME = "items";

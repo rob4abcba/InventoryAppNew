@@ -3,6 +3,7 @@ package com.example.android.pets;
 import android.content.ClipData;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -61,68 +62,39 @@ public class EditorActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Get user input from editor and save new item into database.
+     */
     private void insertItem() {
         // Read from input fields
-        // Use trim to take out whitespace etc.
+        // Use trim to eliminate leading or trailing white space
         String nameString = mNameEditText.getText().toString().trim();
         String priceString = mPriceEditText.getText().toString().trim();
         String quantityString = mQuantityEditText.getText().toString().trim();
         String supplierNameString = mSupplierNameEditText.getText().toString().trim();
         String supplierPhoneString = mSupplierPhoneEditText.getText().toString().trim();
-        // int quantity = Integer.parseInt(quantityString);
 
-        // Get database helper
-        ItemDbHelper mDbHelper = new ItemDbHelper(this);
-
-        // Get database in write mode
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
-        if (TextUtils.isEmpty(nameString) || TextUtils.isEmpty(priceString)||
-                        TextUtils.isEmpty(supplierNameString) || TextUtils.isEmpty(supplierPhoneString)) {
-            // Since no fields were modified, we can return early without creating a new pet.
-            // No need to create ContentValues and no need to do any ContentProvider operations.
-            Toast.makeText(this, "Item was not saved, Item MUST have all fields!",
-                    Toast.LENGTH_SHORT).show();
-            if (TextUtils.isEmpty(nameString)) {
-                Toast.makeText(this, "Please enter the item's name",
-                        Toast.LENGTH_SHORT).show();}
-            if (TextUtils.isEmpty(priceString)) {
-                Toast.makeText(this, "Please enter the item's price",
-                        Toast.LENGTH_SHORT).show();}
-            if (TextUtils.isEmpty(quantityString)) {
-                Toast.makeText(this, "Please enter the item's quantity",
-                        Toast.LENGTH_SHORT).show();}
-            if (TextUtils.isEmpty(supplierNameString)) {
-                Toast.makeText(this, "Please enter the supplier's name",
-                        Toast.LENGTH_SHORT).show();}
-            if (TextUtils.isEmpty(supplierPhoneString)) {
-                Toast.makeText(this, "Please enter the supplier's phone number",
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
-            return;
-        }
-
-        // Create ContentValues object where columns are the keys, and item
-        // attributes are the values.
+        // Create a ContentValues object where column names are the keys,
+        // and item attributes from the editor are the values.
         ContentValues values = new ContentValues();
-        int quantity = Integer.parseInt(quantityString);
         values.put(ItemEntry.COLUMN_ITEM_NAME, nameString);
         values.put(ItemEntry.COLUMN_ITEM_PRICE, priceString);
-        values.put(ItemEntry.COLUMN_ITEM_QUANTITY, quantity);
+        values.put(ItemEntry.COLUMN_ITEM_QUANTITY, quantityString);
         values.put(ItemEntry.COLUMN_ITEM_SUPPLIER_NAME, supplierNameString);
         values.put(ItemEntry.COLUMN_ITEM_SUPPLIER_PHONE, supplierPhoneString);
 
-        // Insert a new item to the database,
-        long newRowId = db.insert(ItemEntry.TABLE_NAME, null, values);
+        // Insert a new item into the provider, returning the content URI for the new item.
+        Uri newUri = getContentResolver().insert(ItemEntry.CONTENT_URI, values);
 
-        // Show a toast message for whether or not the insertion was successful
-        if(newRowId == -1) {
-            // If the response is -1, there was an error with saving the item
-            Toast.makeText(this, "Error with saving item", Toast.LENGTH_SHORT).show();
+        // Show a toast message depending on whether or not the insertion was successful
+        if (newUri == null) {
+            // If the new content URI is null, then there was an error with insertion.
+            Toast.makeText(this, getString(R.string.editor_insert_item_failed),
+                    Toast.LENGTH_SHORT).show();
         } else {
-            // Else, the insertion was successful and we can return in the toast the row ID
-            Toast.makeText(this,"Item saved with row ID " + newRowId, Toast.LENGTH_SHORT).show();
+            // Otherwise, the insertion was successful and we can display a toast.
+            Toast.makeText(this, getString(R.string.editor_insert_item_successful),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 

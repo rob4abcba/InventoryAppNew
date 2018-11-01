@@ -1,10 +1,9 @@
 package com.example.android.pets;
 
-import android.content.ClipData;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -22,9 +21,6 @@ import com.example.android.pets.data.ItemDbHelper;
  */
 public class CatalogActivity extends AppCompatActivity {
 
-    // Database helper that will provide us access to the database
-    private ItemDbHelper mDbHelper;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,12 +35,7 @@ public class CatalogActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        // To access our database, we instantiate our subclass of SQLiteOpenHelper
-        // and pass the context, which is the current activity.
-        mDbHelper = new ItemDbHelper(this);
     }
-
 
     @Override
     protected void onStart () {
@@ -58,9 +49,6 @@ public class CatalogActivity extends AppCompatActivity {
      */
     private void displayDatabaseInfo() {
 
-        // Create and/or open a database to read from it
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
         // Define a projection that specifies which columns from the database
         // you will actually use after this query.
         String [] projection = {
@@ -72,15 +60,14 @@ public class CatalogActivity extends AppCompatActivity {
                 ItemEntry.COLUMN_ITEM_SUPPLIER_PHONE
         };
 
-        // Perform a query on the items table
-        Cursor cursor = db.query(
-                ItemEntry.TABLE_NAME,   // the table to query
-                projection,             // the columns to return
-                null,          // the columns for the WHERE clause
-                null,       // the values for the WHERE clause
-                null,           // don't group the rows
-                null,            // don't filter by row groups
-                null);          // the sort order
+        // Perform a query on the provider using ContentResolver.
+        // Use the {@link PetEntry#CONTENT_URI} to access the item data.
+        Cursor cursor = getContentResolver().query(
+                ItemEntry.CONTENT_URI,   // the content URI of the items table
+                projection,             // the columns to return for each row
+                null,          // selection criteria
+                null,       // selection criteria
+                null);          // the sort order for returned rows
 
         TextView displayView = (TextView) findViewById(R.id.text_view_item);
 
@@ -134,31 +121,25 @@ public class CatalogActivity extends AppCompatActivity {
         }
     }
 
-    // Helper method to insert hardcoded item data into the database. For debugging purposes only.
+    /**
+     * Helper method to insert hardcoded pet data into the database. For debugging purposes only.
+     */
     private void insertItem() {
-        //Gets the database in write mode
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
-        // Create a ContentValues object where the column names are the keys,
-        // and item attributes are the values.
+        // Create a ContentValues object where column names are the keys,
+        // and notebook attributes are the values.
         ContentValues values = new ContentValues();
-        values.put(ItemEntry.COLUMN_ITEM_NAME, "Linkin Park CD");
-        values.put(ItemEntry.COLUMN_ITEM_PRICE, 6.99);
-        values.put(ItemEntry.COLUMN_ITEM_QUANTITY, 5);
-        values.put(ItemEntry.COLUMN_ITEM_SUPPLIER_NAME, "Multimedia Suppliers Inc");
-        values.put(ItemEntry.COLUMN_ITEM_SUPPLIER_PHONE, "8005555555");
+        values.put(ItemEntry.COLUMN_ITEM_NAME, "Notebook");
+        values.put(ItemEntry.COLUMN_ITEM_PRICE, 1.99);
+        values.put(ItemEntry.COLUMN_ITEM_QUANTITY, 30);
+        values.put(ItemEntry.COLUMN_ITEM_SUPPLIER_NAME, "Tree Killers");
+        values.put(ItemEntry.COLUMN_ITEM_SUPPLIER_PHONE, "18001234567");
 
-        // Insert a new row for the dummy CD in the database, returning the ID of that new row.
-        // The first argument for db.insert() is the items table name.
-        // The second argument provides the name of a column in which the framework
-        // can insert NULL in the event the the ContentValues is empty (if this is
-        // set to "null", then the framework will not insert a row when there are no values.
-        // The third argument is the ContentValues object containing info for dummy CD.
-        long newRowId = db.insert(ItemEntry.TABLE_NAME, null, values);
-
-        Log.v("CatalogActivity", "New row ID " + newRowId);
+        // Insert a new row for the notebook into the provider using the ContentResolver.
+        // Use the {@link ItemEntry#CONTENT_URI} to indicate that we want to insert
+        // into the items database table.
+        // Receive the new content URI that will allow us to access notebook data in the future.
+        Uri newUri = getContentResolver().insert(ItemEntry.CONTENT_URI, values);
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu options from the res/menu/menu_catalog.xml file.

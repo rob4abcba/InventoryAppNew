@@ -36,4 +36,10 @@
     <!-- Text hint for name field in the editor [CHAR LIMIT=30] -->
     <string name="hint_item_supplier_phone">Supplier Phone No.</string>
 
+    <!-- Toast message in editor when new item has been successfully inserted [CHAR LIMIT=NONE] -->
+    <string name="editor_insert_item_successful">Item saved</string>
+
+    <!-- Toast message in editor when new item has failed to be inserted [CHAR LIMIT=NONE] -->
+    <string name="editor_insert_item_failed">Error with saving item</string>
+
 </resources>
