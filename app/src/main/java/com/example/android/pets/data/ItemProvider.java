@@ -113,6 +113,36 @@ public class ItemProvider extends ContentProvider {
      * for that specific row in the database.
      */
     private Uri insertItem(Uri uri, ContentValues values) {
+        // Check that the name is not null
+        String name = values.getAsString(ItemContract.ItemEntry.COLUMN_ITEM_NAME);
+        if (name==null || name.isEmpty()) {
+            throw new IllegalArgumentException("Item requires a name");
+        }
+
+        // Check that the price is not null (not able to have negative input)
+        String price = values.getAsString(ItemContract.ItemEntry.COLUMN_ITEM_PRICE);
+        if (price==null || price.isEmpty()) {
+            throw new IllegalArgumentException("Item requires a price amount");
+        }
+
+        // Check that the quantity is not null
+        String quantity = values.getAsString(ItemContract.ItemEntry.COLUMN_ITEM_QUANTITY);
+        if (quantity==null || quantity.isEmpty()) {
+            throw new IllegalArgumentException("Item requires a quantity amount");
+        }
+
+        // Check that the supplierName is not null
+        String supplierName = values.getAsString(ItemContract.ItemEntry.COLUMN_ITEM_SUPPLIER_NAME);
+        if (supplierName==null || supplierName.isEmpty()) {
+            throw new IllegalArgumentException("Item requires a supplier name");
+        }
+
+        // Check that the supplierPhone is not null
+        String supplierPhone = values.getAsString(ItemContract.ItemEntry.COLUMN_ITEM_SUPPLIER_PHONE);
+        if (supplierPhone==null || supplierPhone.isEmpty()) {
+            throw new IllegalArgumentException("Item requires a supplier phone number");
+        }
+
         // Get writable database
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
 
@@ -131,8 +161,84 @@ public class ItemProvider extends ContentProvider {
 
     // Updates the data at the given selection and selection arguments, with the new ContentValues.
     @Override
-    public int update(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs) {
-        return 0;
+    public int update(Uri uri, ContentValues contentValues, String selection,
+                      String[] selectionArgs) {
+        final int match = sUriMatcher.match(uri);
+        switch (match) {
+            case ITEMS:
+                return updateItem(uri, contentValues, selection, selectionArgs);
+            case ITEM_ID:
+                // For the ITEM_ID code, extract out the ID from the URI,
+                // so we know which row to update. Selection will be "_id=?" and selection
+                // arguments will be a String array containing the actual ID.
+                selection = ItemContract.ItemEntry._ID + "=?";
+                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
+                return updateItem(uri, contentValues, selection, selectionArgs);
+            default:
+                throw new IllegalArgumentException("Update is not supported for " + uri);
+        }
+    }
+
+    /**
+     * Update pets in the database with the given content values. Apply the changes to the rows
+     * specified in the selection and selection arguments (which could be 0 or 1 or more items).
+     * Return the number of rows that were successfully updated.
+     */
+    private int updateItem(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+
+        // If the {@link ItemEntry#COLUMN_ITEM_NAME} key is present,
+        // check that the name value is not null.
+        if (values.containsKey(ItemContract.ItemEntry.COLUMN_ITEM_NAME)) {
+            String name = values.getAsString(ItemContract.ItemEntry.COLUMN_ITEM_NAME);
+            if (name == null) {
+                throw new IllegalArgumentException("Item requires a name");
+            }
+        }
+
+        // If the {@link ItemEntry#COLUMN_ITEM_PRICE} key is present,
+        // check that the price value is valid.
+        if (values.containsKey(ItemContract.ItemEntry.COLUMN_ITEM_PRICE)) {
+            String price = values.getAsString(ItemContract.ItemEntry.COLUMN_ITEM_PRICE);
+            if (price==null) {
+                throw new IllegalArgumentException("Item requires a price amount");
+            }
+        }
+
+        // If the {@link ItemEntry#COLUMN_ITEM_QUANTITY} key is present,
+        // check that the quantity value is valid.
+        if (values.containsKey(ItemContract.ItemEntry.COLUMN_ITEM_QUANTITY)) {
+            String quantity = values.getAsString(ItemContract.ItemEntry.COLUMN_ITEM_QUANTITY);
+            if (quantity==null) {
+                throw new IllegalArgumentException("Item requires a quantity amount");
+            }
+        }
+
+        // If the {@link ItemEntry#COLUMN_ITEM_SUPPLIER_NAME} key is present,
+        // check that the supplier name value is valid.
+        if (values.containsKey(ItemContract.ItemEntry.COLUMN_ITEM_SUPPLIER_NAME)) {
+            String supplierName = values.getAsString(ItemContract.ItemEntry.COLUMN_ITEM_SUPPLIER_NAME);
+            if (supplierName==null) {
+                throw new IllegalArgumentException("Item requires a supplier name");
+            }
+        }
+
+        // If the {@link ItemEntry#COLUMN_ITEM_SUPPLIER_PHONE} key is present,
+        // check that the supplier phone value is valid.
+        if (values.containsKey(ItemContract.ItemEntry.COLUMN_ITEM_SUPPLIER_PHONE)) {
+            String supplierPhone = values.getAsString(ItemContract.ItemEntry.COLUMN_ITEM_SUPPLIER_NAME);
+            if (supplierPhone==null) {
+                throw new IllegalArgumentException("Item requires a supplier phone");
+            }
+        }
+
+        // If there are no values to update, then don't try to update the database
+        if (values.size() == 0) {
+            return 0;
+        }// Otherwise, get writable database to update the data
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+
+        // Returns the number of database rows affected by the update statement
+        return database.update(ItemContract.ItemEntry.TABLE_NAME, values, selection, selectionArgs);
     }
 
     // Delete the data at the given selection and selection arguments.
